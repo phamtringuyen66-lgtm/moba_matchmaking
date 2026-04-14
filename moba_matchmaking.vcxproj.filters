@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="model">
+      <UniqueIdentifier>{40940391-4663-4853-92db-0934f56b825a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="queue">
+      <UniqueIdentifier>{fa11c6ac-0ab6-4da7-8264-a238cc9fc635}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="matchmaking">
+      <UniqueIdentifier>{6c7efe53-1ab5-42bc-81cf-cd9b89ec1f09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="algorithm">
+      <UniqueIdentifier>{afe6c824-1424-448b-a6e6-ab916a5fa8de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rating">
+      <UniqueIdentifier>{d6c24384-b2f4-428c-acf8-6dc95263407c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="moba_matchmaking.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>model</Filter>
+    </ClCompile>
+    <ClCompile Include="queue.cpp">
+      <Filter>queue</Filter>
+    </ClCompile>
+    <ClCompile Include="matchmaker.cpp">
+      <Filter>matchmaking</Filter>
+    </ClCompile>
+    <ClCompile Include="balance.cpp">
+      <Filter>algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="hungarian.cpp">
+      <Filter>algorithm</Filter>
+    </ClCompile>
+    <ClCompile Include="elo.cpp">
+      <Filter>rating</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="player.h">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="queue.h">
+      <Filter>queue</Filter>
+    </ClInclude>
+    <ClInclude Include="matchmaker.h">
+      <Filter>matchmaking</Filter>
+    </ClInclude>
+    <ClInclude Include="balance.h">
+      <Filter>algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="hungarianr.h">
+      <Filter>algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="elo.h">
+      <Filter>rating</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
