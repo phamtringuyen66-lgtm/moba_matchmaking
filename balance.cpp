@@ -10,7 +10,7 @@ namespace balance
         TeamSplit bestSplit;
         bestSplit.mmr_diff = 1e9; // khởi tạo với giá trị rất lớn
 
-        // duyệt toàn bộ tổ hợp C(10,5) = 252
+        // duyệt toàn bộ tổ hợp C (10,5) = 252
         for (int mask = 0; mask < (1 << 10); ++mask)
         {
             if (__builtin_popcount(mask) == 5)
