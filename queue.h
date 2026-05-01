@@ -1,20 +1,31 @@
-#pragma once
+#ifndef QUEUE_H
+#define QUEUE_H
+
+#include <queue>
 #include "player.h"
-#include <vector>
-#include <ctime>
 
-struct QueueEntry {
-    Player player;
-    time_t start_time;
-
-    double getWaitTime() const;
+struct CompareWait {
+    bool operator()(const Player& a, const Player& b) const {
+        return a.joinTime > b.joinTime;
+    }
 };
 
-class MatchmakingQueue {
+class MatchQueue {
 private:
-    std::vector<QueueEntry> queue;
+    std::priority_queue<Player, std::vector<Player>, CompareWait> waitingList;
 
 public:
-    void enqueue(Player p);
-    const std::vector<QueueEntry>& getQueue() const;
+    void addPlayer(const Player& p);
+
+    Player popFront();
+
+    int getTopPlayers(Player* result, int n) const;
+
+    bool isEmpty() const;
+
+    int size() const;
+
+    void printQueue() const;
 };
+
+#endif

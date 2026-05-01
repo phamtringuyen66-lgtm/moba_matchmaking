@@ -1,12 +1,19 @@
-#pragma once
+#ifndef PLAYER_H
+#define PLAYER_H
+
 #include <string>
-#include <vector>
+#include <ctime>
 
 struct Player {
-    std::string id;
+    int id;
     std::string name;
-    double mmr = 1500.0;
-    double mmr_deviation = 350.0;
-    double volatility = 0.06;
-    std::vector<std::string> preferred_roles;
+    int mmr;                   
+    std::string preferredRole; 
+    time_t joinTime;           
 };
+
+double getWaitSeconds(const Player& p);
+
+void printPlayer(const Player& p);
+
+#endif
