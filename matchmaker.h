@@ -1,43 +1,40 @@
 #pragma once
 
-#include "queue.h"
-#include "balance.h"
-#include "hungarian.h"
-#include "player.h"
-
-#include <array>
 #include <vector>
-#include <optional>
+#include <string>
 #include <chrono>
-#include <cstddef>
+#include <utility>
 
-namespace matchmaker {
+struct Player {
+    std::string player_id;
+    std::string name;
+    double mmr;
+    double mmr_deviation;
+    std::vector<std::string> preferred_roles;
+};
 
-using Seconds = std::chrono::seconds;
+struct QueueEntry {
+    Player player;
+    std::chrono::steady_clock::time_point queue_start;
+    std::string party_id;
 
-struct MatchResult {
-    std::vector<Player> teamA;
-    std::vector<Player> teamB;
-    hungarian::Assignment assignmentA;
-    hungarian::Assignment assignmentB;
-    double combined_cost = 0.0;
-    std::chrono::system_clock::time_point created_at;
+    double wait_time() const;
+    std::pair<double, double> mmr_range() const;
 };
 
 class Matchmaker {
 public:
-    Matchmaker() = default;
-    ~Matchmaker() = default;
+    //thêm ng chơi vào hàng chờ
+    void enqueue(const Player& p, std::string party_id = "");
 
-    void tick();
-    std::optional<std::array<Player, 10>> find_candidates(const Player& anchor, const Seconds& wait_seconds) const;
-    MatchResult assign_roles_and_build(const balance::TeamSplit& split) const;
-    void enqueue_player(const Player& p);
-    const MatchmakingQueue& get_queue() const;
+    // tìm kiếm 10 người chơi phù hợp theo MMR và thời gian chờ 
+    std::vector<Player> find_match();
 
 private:
-    static double mmr_range_for_wait(const Seconds& wait_seconds);
-    MatchmakingQueue queue_;
-};
+    std::vector<QueueEntry> queue;
 
-} // namespace matchmaker
+    // Các hằng số điều chỉnh 
+    const double MMR_INITIAL_RANGE = 150.0;
+    const double MMR_EXPAND_PER_SEC = 50.0 / 30.0;
+    const double MMR_MAX_RANGE = 600.0;
+};
