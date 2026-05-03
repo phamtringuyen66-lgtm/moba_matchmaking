@@ -26,6 +26,8 @@ public:
     int size() const;
 
     void printQueue() const;
+
+    double getMmrRange(int waitTimeSeconds) const;
 };
 
 #endif

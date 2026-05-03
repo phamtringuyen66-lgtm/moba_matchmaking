@@ -5,6 +5,8 @@
 namespace balance
 {
 
+    constexpr double BALANCE_THRESHOLD = 30.0;
+
     TeamSplit BruteForceBalancer::findBestSplit(const std::array<Player, 10> &players)
     {
         TeamSplit bestSplit;
@@ -13,7 +15,7 @@ namespace balance
         // Duyệt toàn bộ tổ hợp C(10,5) = 252
         for (int mask = 0; mask < (1 << 10); ++mask)
         {
-            if (__builtin_popcount(mask) == 5)
+            if (__popcnt(mask) == 5)
             {
                 double sumA = 0.0, sumB = 0.0;
                 std::vector<Player> teamA, teamB;
@@ -46,6 +48,10 @@ namespace balance
                 }
             }
         }
+
+        // Đặt trạng thái dựa trên ngưỡng BALANCE_THRESHOLD
+        bestSplit.status = (bestSplit.mmr_diff > BALANCE_THRESHOLD) ? BalanceStatus::UNBALANCED : BalanceStatus::OK;
+
         return bestSplit;
     }
 

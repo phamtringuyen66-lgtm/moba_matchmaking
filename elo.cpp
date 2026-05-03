@@ -1,4 +1,4 @@
-#include "elo.h"
+﻿#include "elo.h"
 #include <cmath>
 #include <vector>
 #include <numeric>
@@ -7,12 +7,12 @@
 
 namespace {
 
-// Pi h?ng
+// Pi hằng
 constexpr double PI = 3.14159265358979323846;
 
 } // namespace
 
-// H�m ti?n: �nh x? k?t qu? tr?n ??u sang ?i?m (WIN=1.0, LOSS=0.0, DRAW=0.5)
+// Hàm tiện: ánh xạ kết quả trận đấu sang điểm (WIN=1.0, LOSS=0.0, DRAW=0.5)
 double outcome_score(MatchOutcome o) {
     switch (o) {
         case MatchOutcome::WIN:  return 1.0;
@@ -30,16 +30,16 @@ double expected_score(double mmr_a, double mmr_b) {
 }
 
 void update(Player& player, double opp_mmr, MatchOutcome outcome) {
-    // L?y ?i?m th?c t? S
+    // Lấy điểm thực tế S
     double S = outcome_score(outcome);
-    // T�nh k? v?ng E
+    // Tính kỳ vọng E
     double E = expected_score(player.mmr, opp_mmr);
-    // C?p nh?t MMR: MMR_new = MMR_old + K * (S - E)
+    // Cập nhật MMR: MMR_new = MMR_old + K * (S - E)
     player.mmr += K_FACTOR * (S - E);
 }
 
 void update_match(std::vector<Player>& team_a, std::vector<Player>& team_b, bool a_wins) {
-    // T�nh MMR trung b�nh c?a m?i ??i
+    // Tính MMR trung bình của mỗi đội
     auto avg_mmr = [](const std::vector<Player>& team) -> double {
         if (team.empty()) return 0.0;
         double s = std::accumulate(team.begin(), team.end(), 0.0,
@@ -50,19 +50,12 @@ void update_match(std::vector<Player>& team_a, std::vector<Player>& team_b, bool
     double avg_b = avg_mmr(team_b);
     double avg_a = avg_mmr(team_a);
 
-    // K?t qu? ??i A so v?i ??i B
-    MatchOutcome outcome_a = a_wins ? MatchOutcome::WIN : MatchOutcome::LOSS;
-    if (!a_wins) {
-        // n?u A thua th� B th?ng; n?u A th?ng th� B thua
-        // ch�ng ta s? x? l� ??i B t??ng ?ng
-    }
-
-    // C?p nh?t t?ng ng??i trong team A v?i opp_mmr = avg_b
+    // Cập nhật từng người trong team A với opp_mmr = avg_b
     for (auto& p : team_a) {
-        update(p, avg_b, a_wins ? MatchOutcome::WIN : (a_wins==false ? MatchOutcome::LOSS : MatchOutcome::DRAW));
+        update(p, avg_b, a_wins ? MatchOutcome::WIN : MatchOutcome::LOSS);
     }
 
-    // C?p nh?t t?ng ng??i trong team B v?i opp_mmr = avg_a (k?t qu? ??o)
+    // Cập nhật từng người trong team B với opp_mmr = avg_a (kết quả đảo)
     for (auto& p : team_b) {
         update(p, avg_a, a_wins ? MatchOutcome::LOSS : MatchOutcome::WIN);
     }
@@ -83,19 +76,19 @@ double E_func(double mu, double mu_j, double phi_j) {
     return 1.0 / (1.0 + std::exp(-g * (mu - mu_j)));
 }
 
-// C?p nh?t m?t ng??i ch?i theo danh s�ch ??i th? (theo Glicko-2)
+// Cập nhật một người chơi theo danh sách đối thủ (theo Glicko-2)
 void update_single(Player& player, const std::vector<OpponentRecord>& opponents) {
     if (opponents.empty()) {
-        // Kh�ng c� ??i th? -> kh�ng c?p nh?t
+        // Không có đối thủ -> không cập nhật
         return;
     }
 
-    // 1) Chuy?n ??i rating v� RD sang h? chu?n (mu, phi)
+    // 1) Chuyển đổi rating và RD sang hệ chuẩn (mu, phi)
     double mu = (player.mmr - 1500.0) / SCALE;
     double phi = player.mmr_deviation / SCALE;
     double sigma = player.volatility;
 
-    // 2) T�nh g(phi_j), E_j cho t?ng ??i th? v� c�c t?ng c?n thi?t
+    // 2) Tính g(phi_j), E_j cho từng đối thủ và các tổng cần thiết
     double sum_g2_E1E = 0.0; // sum g^2 * E * (1 - E)
     double sum_g_s_minus_E = 0.0; // sum g * (s_j - E_j)
 
@@ -114,7 +107,7 @@ void update_single(Player& player, const std::vector<OpponentRecord>& opponents)
     // 4) delta = v * sum_g_s_minus_E
     double delta = v * sum_g_s_minus_E;
 
-    // 5) T�m sigma' (volatility m?i) b?ng thu?t to�n t�m nghi?m (theo Glickman)
+    // 5) Tìm sigma' (volatility mới) bằng thuật toán tìm nghiệm (theo Glickman)
     double a = std::log(sigma * sigma);
 
     auto f = [&](double x) {
@@ -124,17 +117,17 @@ void update_single(Player& player, const std::vector<OpponentRecord>& opponents)
         return num / den - (x - a) / (TAU * TAU);
     };
 
-    // Kh?i t?o A = a
+    // Khởi tạo A = a
     double A = a;
     double B;
     if (delta * delta > (phi * phi + v)) {
         B = std::log(delta * delta - phi * phi - v);
     } else {
-        // T�m B sao cho f(B) < 0
+        // Tìm B sao cho f(B) < 0
         double k = 1.0;
         while (f(a - k * TAU) > 0.0) {
             k *= 2.0;
-            // b?o ??m kh�ng v� h?n
+            // bảo đảm không vô hạn
             if (k > 1e9) break;
         }
         B = a - k * TAU;
@@ -174,34 +167,42 @@ void update_single(Player& player, const std::vector<OpponentRecord>& opponents)
     // 8) mu_new = mu + phi_new^2 * sum_g_s_minus_E
     double mu_new = mu + (phi_new * phi_new) * sum_g_s_minus_E;
 
-    // 9) Chuy?n ng??c v? MMR v� RD
+    // 9) Chuyển ngược về MMR và RD
     player.mmr = mu_new * SCALE + 1500.0;
     player.mmr_deviation = phi_new * SCALE;
     player.volatility = sigma_prime;
 }
 
-// C?p nh?t c? tr?n: m?i ng??i d�ng 5 ??i th? trong ??i ??i ph??ng
+// Cập nhật cả trận: mỗi người dùng 5 đối thủ trong đội đối phương
 void update_match(std::vector<Player>& team_a, std::vector<Player>& team_b, bool a_wins) {
-    // Chu?n ho� score cho t?ng c?p: n?u a_wins th� team A c� score 1.0, team B 0.0
+    // Chuẩn hoá score cho từng cặp: nếu a_wins thì team A có score 1.0, team B 0.0
     double score_a = a_wins ? 1.0 : 0.0;
     double score_b = a_wins ? 0.0 : 1.0;
 
-    // T?o records cho ??i B (???c d�ng cho m?i player trong A)
+    // Tạo records cho đội B (được dùng cho mỗi player trong A)
     for (auto& p : team_a) {
         std::vector<OpponentRecord> opponents;
         opponents.reserve(team_b.size());
         for (const auto& opp : team_b) {
-            opponents.push_back(OpponentRecord{opp.mmr, opp.mmr_deviation, score_a});
+            opponents.push_back(OpponentRecord{
+                static_cast<double>(opp.mmr),
+                opp.mmr_deviation,
+                score_a
+            });
         }
         update_single(p, opponents);
     }
 
-    // T??ng t? cho ??i B
+    // Tương tự cho đội B
     for (auto& p : team_b) {
         std::vector<OpponentRecord> opponents;
         opponents.reserve(team_a.size());
         for (const auto& opp : team_a) {
-            opponents.push_back(OpponentRecord{opp.mmr, opp.mmr_deviation, score_b});
+            opponents.push_back(OpponentRecord{
+                static_cast<double>(opp.mmr),
+                opp.mmr_deviation,
+                score_b
+            });
         }
         update_single(p, opponents);
     }

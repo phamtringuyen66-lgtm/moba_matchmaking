@@ -1,6 +1,7 @@
 #include "queue.h"
 #include <iostream>
 #include <stdexcept>
+#include <algorithm>
 
 void MatchQueue::addPlayer(const Player& p) {
     waitingList.push(p);
@@ -48,4 +49,18 @@ void MatchQueue::printQueue() const {
     }
 
     std::cout << "=======================================\n";
+}
+
+double MatchQueue::getMmrRange(int waitTimeSeconds) const {
+    // Khai báo h?ng s? theo yêu c?u
+    constexpr double MMR_INITIAL_RANGE = 150.0;
+    constexpr double MMR_EXPAND_PER_SEC = 1.67;
+    constexpr double MMR_MAX_RANGE = 600.0;
+
+    // B?o ??m th?i gian ch? không âm
+    int t = std::max(0, waitTimeSeconds);
+
+    // range(t) = min(MMR_INITIAL_RANGE + t * MMR_EXPAND_PER_SEC, MMR_MAX_RANGE)
+    double range = MMR_INITIAL_RANGE + static_cast<double>(t) * MMR_EXPAND_PER_SEC;
+    return std::min(range, MMR_MAX_RANGE);
 }

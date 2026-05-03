@@ -17,11 +17,9 @@ struct Assignment {
 
 class HungarianSolver {
 public:
+    HungarianSolver() = default;
     static std::optional<Assignment> solve(const CostMatrix& cost_matrix);
     static bool validate(const CostMatrix& cost_matrix);
-
-private:
-    HungarianSolver() = delete;
 };
 
 }
